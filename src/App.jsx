@@ -539,36 +539,36 @@ function AppContent() {
 
     // Логіка для Бейджів (Досягнень)
     const completedTasksCount = tasks.filter(t => t.status === 'completed').length;
+    const hasCustomName = profile.username !== 'Гість' && !profile.username.startsWith('Student_');
+    const hasAvatar = profile.avatar_url && profile.avatar_url.trim() !== '';
+    const rankNum = typeof myRank === 'number' ? myRank : 999; // 999 - якщо не в топі
     
     const badges = [
-      {
-        id: 1,
-        name: "Перший крок",
-        description: "Виконано 1 завдання",
-        icon: "🎯",
-        unlocked: completedTasksCount >= 1
-      },
-      {
-        id: 2,
-        name: "Дослідник",
-        description: "Досягнуто 2-го рівня",
-        icon: "🔥",
-        unlocked: profile.level >= 2
-      },
-      {
-        id: 3,
-        name: "Ефективність",
-        description: "Виконано 5 завдань",
-        icon: "⚡",
-        unlocked: completedTasksCount >= 5
-      },
-      {
-        id: 4,
-        name: "Ерудит",
-        description: "Досягнуто 5-го рівня",
-        icon: "🧠",
-        unlocked: profile.level >= 5
-      }
+      // --- СТАРТОВІ ---
+      { id: 1, name: "Ідентифікація", desc: "Змінити ім'я", icon: "✍️", unlocked: hasCustomName },
+      { id: 2, name: "Нове обличчя", desc: "Встановити аватарку", icon: "🖼️", unlocked: hasAvatar },
+      { id: 3, name: "Перший крок", desc: "Виконано 1 завдання", icon: "🎯", unlocked: completedTasksCount >= 1 },
+      
+      // --- ПРОДУКТИВНІСТЬ ---
+      { id: 4, name: "Ефективність", desc: "Виконано 5 завдань", icon: "⚡", unlocked: completedTasksCount >= 5 },
+      { id: 5, name: "Продуктивність", desc: "Виконано 10 завдань", icon: "🚀", unlocked: completedTasksCount >= 10 },
+      { id: 6, name: "Майстер часу", desc: "Виконано 25 завдань", icon: "⏳", unlocked: completedTasksCount >= 25 },
+      { id: 7, name: "Бібліотека", desc: "Виконано 50 завдань", icon: "📚", unlocked: completedTasksCount >= 50 },
+
+      // --- РІВНІ ---
+      { id: 8, name: "Дослідник", desc: "Досягнуто 2 рівня", icon: "🔍", unlocked: profile.level >= 2 },
+      { id: 9, name: "Ерудит", desc: "Досягнуто 5 рівня", icon: "🧠", unlocked: profile.level >= 5 },
+      { id: 10, name: "Магістр", desc: "Досягнуто 10 рівня", icon: "🎓", unlocked: profile.level >= 10 },
+      { id: 11, name: "Грандмайстер", desc: "Досягнуто 20 рівня", icon: "🧙‍♂️", unlocked: profile.level >= 20 },
+
+      // --- РЕЙТИНГ ---
+      { id: 12, name: "Альпініст", desc: "Увійти в Топ-10", icon: "🧗‍♂️", unlocked: rankNum <= 10 },
+      { id: 13, name: "Бронзовий розум", desc: "Топ-3 рейтингу", icon: "🥉", unlocked: rankNum <= 3 },
+      { id: 14, name: "Срібний інтелект", desc: "Топ-2 рейтингу", icon: "🥈", unlocked: rankNum <= 2 },
+      { id: 15, name: "Абсолютний лідер", desc: "Топ-1 рейтингу", icon: "🥇", unlocked: rankNum === 1 },
+      
+      // --- ТАЄМНЕ ---
+      { id: 16, name: "Творець Матриці", desc: "Права адміністратора", icon: "👑", unlocked: profile.role === 'admin' },
     ];
 
     return (
