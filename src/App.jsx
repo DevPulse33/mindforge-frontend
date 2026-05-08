@@ -599,7 +599,7 @@ function AppContent() {
 
     return (
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 max-w-4xl mx-auto text-center animate-fade-in relative">
-        <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-24 h-24 sm:w-32 sm:h-32 text-4xl sm:text-5xl" /></div>
+        <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-45 h-45 text-4xl sm:text-5xl" /></div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">{profile.username}</h1>
         <p className="text-sm sm:text-base text-slate-500 mb-8">Учень епохи суспільства знань</p>
         
@@ -793,7 +793,7 @@ function AppContent() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
               <div className="md:col-span-1 space-y-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
-                  <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-24 h-24 sm:w-32 sm:h-32 text-2xl sm:text-4xl" /></div>
+                  <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-45 h-45 text-2xl sm:text-4xl" /></div>
                   <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-1">{profile.username}</h2>
                   <div className="flex items-center justify-between mb-2 mt-6"><span className="text-sm font-medium text-slate-500">Рівень</span><span className="bg-indigo-100 text-indigo-700 py-1 px-3 rounded-full text-sm font-bold">LVL {profile.level}</span></div>
                   <div className="mb-1 flex justify-between text-xs font-semibold text-slate-500 mt-4"><span>Досвід (XP)</span><span>{profile.xp} / 100</span></div>
