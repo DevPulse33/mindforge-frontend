@@ -28,6 +28,36 @@ function AppContent() {
   const [profile, setProfile] = useState({ username: 'Гість', level: 1, xp: 0, avatar_url: '', role: 'user' });
   const [tasks, setTasks] = useState([]);
   const [newTaskText, setNewTaskText] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiTopic, setAiTopic] = useState('');
+  const [showAiModal, setShowAiModal] = useState(false);
+
+  const handleGenerateAI = async (e) => {
+    e.preventDefault();
+    if (!aiTopic.trim()) return;
+    
+    setIsGenerating(true);
+    try {
+      const res = await fetch(`${URL}/tasks/generate-roadmap`, {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ topic: aiTopic })
+      });
+      
+      if (res.ok) {
+        setAiTopic('');
+        setShowAiModal(false);
+        fetchDashboardData(); // Оновлюємо список
+      } else {
+        alert("Помилка генерації. Спробуйте іншу тему.");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const [reviewModalTaskId, setReviewModalTaskId] = useState(null);
   const [reflectionText, setReflectionText] = useState('');
   const [proofUrl, setProofUrl] = useState('');
@@ -772,9 +802,17 @@ function AppContent() {
               </div>
               <div className="md:col-span-2 space-y-6">
                 <div className="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
-                  <h2 className="text-xl font-bold text-slate-800 mb-4">План розвитку</h2>
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold text-slate-800">План розвитку</h2>
+                    <button 
+                      onClick={() => setShowAiModal(true)} 
+                      className="text-sm bg-purple-100 text-purple-700 font-bold px-3 py-1.5 rounded-lg hover:bg-purple-200 transition flex items-center gap-1 shadow-sm"
+                    >
+                      <span>✨</span> AI Roadmap
+                    </button>
+                  </div>
                   <form onSubmit={handleAddTask} className="flex flex-col sm:flex-row gap-3 sm:gap-2 mb-6">
-                    <input type="text" value={newTaskText} onChange={(e) => setNewTaskText(e.target.value)} placeholder="Додати завдання..." className="w-full sm:flex-1 px-4 py-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
+                    <input type="text" value={newTaskText} onChange={(e) => setNewTaskText(e.target.value)} placeholder="Додати завдання вручну..." className="w-full sm:flex-1 px-4 py-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500" />
                     <button type="submit" className="w-full sm:w-auto bg-indigo-600 text-white px-6 py-3 sm:py-2 rounded-lg font-semibold hover:bg-indigo-700">Додати</button>
                   </form>
                   <ul className="space-y-3">
@@ -831,6 +869,38 @@ function AppContent() {
           </div>
         </div>
       )}
+
+      {/* === НОВА МОДАЛКА AI ГЕНЕРАЦІЇ === */}
+      {showAiModal && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl animate-fade-in">
+            <div className="text-4xl text-center mb-2">✨</div>
+            <h3 className="text-xl font-bold text-slate-800 mb-2 text-center">ШІ-Ментор</h3>
+            <p className="text-slate-500 text-sm mb-6 text-center">Напишіть, що ви хочете вивчити або вдосконалити, і ШІ складе для вас план із 3 завдань.</p>
+            
+            <form onSubmit={handleGenerateAI} className="space-y-4">
+              <div>
+                <input 
+                  required 
+                  type="text"
+                  value={aiTopic} 
+                  onChange={(e) => setAiTopic(e.target.value)} 
+                  placeholder="Наприклад: Тайм-менеджмент..."
+                  className="w-full px-4 py-3 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                <button type="button" onClick={() => setShowAiModal(false)} className="w-full sm:flex-1 bg-slate-200 text-slate-700 py-3 sm:py-2 rounded-lg font-semibold hover:bg-slate-300">Скасувати</button>
+                <button type="submit" disabled={isGenerating} className={`w-full sm:flex-1 text-white py-3 sm:py-2 rounded-lg font-semibold flex justify-center items-center gap-2 ${isGenerating ? 'bg-purple-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}`}>
+                  {isGenerating ? 'Магія в процесі... ⏳' : 'Згенерувати'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
