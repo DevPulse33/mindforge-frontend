@@ -518,10 +518,11 @@ function AppContent() {
   const toggleDropdown = (e) => { e.stopPropagation(); setIsDropdownOpen(!isDropdownOpen); };
 
   // ==========================================
-  // СТОРІНКА ПРОФІЛЮ (ОНОВЛЕНА: З БЕЙДЖАМИ)
+  // СТОРІНКА ПРОФІЛЮ (ОНОВЛЕНА: З МОДАЛКОЮ БЕЙДЖІВ)
   // ==========================================
   const ProfilePage = () => {
     const [myRank, setMyRank] = useState(null);
+    const [selectedBadge, setSelectedBadge] = useState(null); // Стан для модального вікна бейджа
 
     useEffect(() => {
       fetch(`${URL}/profile/leaderboard`, { headers: { 'Authorization': `Bearer ${token}` } })
@@ -541,43 +542,38 @@ function AppContent() {
     const completedTasksCount = tasks.filter(t => t.status === 'completed').length;
     const hasCustomName = profile.username !== 'Гість' && !profile.username.startsWith('Student_');
     const hasAvatar = profile.avatar_url && profile.avatar_url.trim() !== '';
-    const rankNum = typeof myRank === 'number' ? myRank : 999; // 999 - якщо не в топі
+    const rankNum = typeof myRank === 'number' ? myRank : 999; 
     
     const badges = [
-      // --- СТАРТОВІ ---
-      { id: 1, name: "Ідентифікація", desc: "Змінити ім'я", icon: "✍️", unlocked: hasCustomName },
-      { id: 2, name: "Нове обличчя", desc: "Встановити аватарку", icon: "🖼️", unlocked: hasAvatar },
-      { id: 3, name: "Перший крок", desc: "Виконано 1 завдання", icon: "🎯", unlocked: completedTasksCount >= 1 },
+      { id: 1, name: "Ідентифікація", desc: "Змінити ім'я", fullDesc: "Ви змінили стандартне ім'я на свій унікальний нікнейм. Перший крок до власного бренду зроблено!", icon: "✍️", unlocked: hasCustomName },
+      { id: 2, name: "Нове обличчя", desc: "Встановити аватарку", fullDesc: "Ви встановили персональну аватарку. Тепер інші користувачі впізнаватимуть вас у таблиці лідерів.", icon: "🖼️", unlocked: hasAvatar },
+      { id: 3, name: "Перший крок", desc: "Виконано 1 завдання", fullDesc: "Ви успішно закрили своє перше завдання. Найважче — це почати, продовжуйте в тому ж дусі!", icon: "🎯", unlocked: completedTasksCount >= 1 },
       
-      // --- ПРОДУКТИВНІСТЬ ---
-      { id: 4, name: "Ефективність", desc: "Виконано 5 завдань", icon: "⚡", unlocked: completedTasksCount >= 5 },
-      { id: 5, name: "Продуктивність", desc: "Виконано 10 завдань", icon: "🚀", unlocked: completedTasksCount >= 10 },
-      { id: 6, name: "Майстер часу", desc: "Виконано 25 завдань", icon: "⏳", unlocked: completedTasksCount >= 25 },
-      { id: 7, name: "Бібліотека", desc: "Виконано 50 завдань", icon: "📚", unlocked: completedTasksCount >= 50 },
+      { id: 4, name: "Ефективність", desc: "Виконано 5 завдань", fullDesc: "Ви успішно виконали 5 завдань. Дисципліна перетворюється на звичку.", icon: "⚡", unlocked: completedTasksCount >= 5 },
+      { id: 5, name: "Продуктивність", desc: "Виконано 10 завдань", fullDesc: "10 виконаних завдань! Ваша продуктивність вражає. Ви рухаєтесь до своєї мети швидше за інших.", icon: "🚀", unlocked: completedTasksCount >= 10 },
+      { id: 6, name: "Майстер часу", desc: "Виконано 25 завдань", fullDesc: "Чверть сотні завдань! Ви навчилися ідеально керувати своїм часом та пріоритетами.", icon: "⏳", unlocked: completedTasksCount >= 25 },
+      { id: 7, name: "Бібліотека знань", desc: "Виконано 50 завдань", fullDesc: "50 виконаних завдань! Ваш багаж знань став по-справжньому великим.", icon: "📚", unlocked: completedTasksCount >= 50 },
 
-      // --- РІВНІ ---
-      { id: 8, name: "Дослідник", desc: "Досягнуто 2 рівня", icon: "🔍", unlocked: profile.level >= 2 },
-      { id: 9, name: "Ерудит", desc: "Досягнуто 5 рівня", icon: "🧠", unlocked: profile.level >= 5 },
-      { id: 10, name: "Магістр", desc: "Досягнуто 10 рівня", icon: "🎓", unlocked: profile.level >= 10 },
-      { id: 11, name: "Грандмайстер", desc: "Досягнуто 20 рівня", icon: "🧙‍♂️", unlocked: profile.level >= 20 },
+      { id: 8, name: "Дослідник", desc: "Досягнуто 2 рівня", fullDesc: "Ви отримали свій другий рівень. Ваша подорож у суспільстві знань тільки починається.", icon: "🔍", unlocked: profile.level >= 2 },
+      { id: 9, name: "Ерудит", desc: "Досягнуто 5 рівня", fullDesc: "П'ятий рівень! Ваші знання стають глибокими та різносторонніми.", icon: "🧠", unlocked: profile.level >= 5 },
+      { id: 10, name: "Магістр", desc: "Досягнуто 10 рівня", fullDesc: "Десятий рівень. Тепер ви можете ділитися своїми знаннями з іншими, ваш авторитет визнано.", icon: "🎓", unlocked: profile.level >= 10 },
+      { id: 11, name: "Грандмайстер", desc: "Досягнуто 20 рівня", fullDesc: "Двадцятий рівень! Абсолютний майстер. Ваша цілеспрямованість надихає всю спільноту.", icon: "🧙‍♂️", unlocked: profile.level >= 20 },
 
-      // --- РЕЙТИНГ ---
-      { id: 12, name: "Альпініст", desc: "Увійти в Топ-10", icon: "🧗‍♂️", unlocked: rankNum <= 10 },
-      { id: 13, name: "Бронзовий розум", desc: "Топ-3 рейтингу", icon: "🥉", unlocked: rankNum <= 3 },
-      { id: 14, name: "Срібний інтелект", desc: "Топ-2 рейтингу", icon: "🥈", unlocked: rankNum <= 2 },
-      { id: 15, name: "Абсолютний лідер", desc: "Топ-1 рейтингу", icon: "🥇", unlocked: rankNum === 1 },
+      { id: 12, name: "Альпініст", desc: "Увійти в Топ-10", fullDesc: "Ви увійшли до десятки найкращих користувачів платформи. Конкуренти дихають у спину!", icon: "🧗‍♂️", unlocked: rankNum <= 10 },
+      { id: 13, name: "Бронзовий розум", desc: "Топ-3 рейтингу", fullDesc: "Ви увійшли до трійки лідерів і здобули бронзу. Відмінний результат!", icon: "🥉", unlocked: rankNum <= 3 },
+      { id: 14, name: "Срібний інтелект", desc: "Топ-2 рейтингу", fullDesc: "Друге місце в рейтингу! Ви майже на самій вершині.", icon: "🥈", unlocked: rankNum <= 2 },
+      { id: 15, name: "Абсолютний лідер", desc: "Топ-1 рейтингу", fullDesc: "Перше місце. Король платформи. Ви довели, що вам немає рівних у навчанні.", icon: "🥇", unlocked: rankNum === 1 },
       
-      // --- ТАЄМНЕ ---
-      { id: 16, name: "Творець Матриці", desc: "Права адміністратора", icon: "👑", unlocked: profile.role === 'admin' },
+      { id: 16, name: "Творець Матриці", desc: "Права адміністратора", fullDesc: "Ви маєте доступ до панелі адміністратора. З великою силою приходить велика відповідальність.", icon: "👑", unlocked: profile.role === 'admin' },
     ];
 
     return (
-      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 max-w-2xl mx-auto text-center animate-fade-in">
-        <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-45 h-45 text-4xl sm:text-5xl" /></div>
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 max-w-4xl mx-auto text-center animate-fade-in relative">
+        <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-24 h-24 sm:w-32 sm:h-32 text-4xl sm:text-5xl" /></div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">{profile.username}</h1>
         <p className="text-sm sm:text-base text-slate-500 mb-8">Учень епохи суспільства знань</p>
         
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
           <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
             <p className="text-sm text-slate-500 mb-1">Поточний рівень</p>
             <p className="text-2xl font-bold text-indigo-600">{profile.level}</p>
@@ -594,15 +590,18 @@ function AppContent() {
           </div>
         </div>
 
-        {/* НОВИЙ БЛОК: ДОСЯГНЕННЯ */}
-        <div className="mt-10 text-left">
-          <h2 className="text-xl font-bold text-slate-800 mb-4">Мої досягнення 🏅</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {/* СІТКА БЕЙДЖІВ */}
+        <div className="mt-12 text-left">
+          <h2 className="text-xl font-bold text-slate-800 mb-6">Мої досягнення 🏅</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-4">
              {badges.map(badge => (
-                <div key={badge.id} className={`p-4 rounded-xl border text-center transition-all duration-300 ${badge.unlocked ? 'bg-white border-indigo-200 shadow-sm' : 'bg-slate-50 border-slate-100 opacity-50 grayscale'}`}>
-                   <div className="text-3xl mb-2">{badge.icon}</div>
+                <div 
+                  key={badge.id} 
+                  onClick={() => setSelectedBadge(badge)}
+                  className={`p-4 rounded-xl border text-center cursor-pointer transition-all duration-300 hover:scale-105 ${badge.unlocked ? 'bg-white border-indigo-200 shadow-sm hover:shadow-md' : 'bg-slate-50 border-slate-100 opacity-60 grayscale hover:opacity-100 hover:grayscale-0'}`}
+                >
+                   <div className="text-4xl mb-3">{badge.icon}</div>
                    <h3 className={`font-bold text-sm leading-tight mb-1 ${badge.unlocked ? 'text-indigo-700' : 'text-slate-500'}`}>{badge.name}</h3>
-                   <p className="text-xs text-slate-400">{badge.description}</p>
                 </div>
              ))}
           </div>
@@ -611,6 +610,57 @@ function AppContent() {
         <div className="mt-8 pt-6 border-t border-slate-100">
            <Link to="/leaderboard" className="text-indigo-600 font-bold hover:underline">Переглянути повну таблицю лідерів 🏆</Link>
         </div>
+
+        {/* === МОДАЛЬНЕ ВІКНО БЕЙДЖА === */}
+        {selectedBadge && (
+          <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4" onClick={() => setSelectedBadge(null)}>
+            <div 
+              className="bg-white p-8 rounded-3xl w-full max-w-sm text-center shadow-2xl transform transition-all scale-100 animate-fade-in relative"
+              onClick={(e) => e.stopPropagation()} // Щоб клік всередині модалки не закривав її
+            >
+              {/* Хрестик для закриття */}
+              <button 
+                onClick={() => setSelectedBadge(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-xl font-bold p-2"
+              >
+                ✕
+              </button>
+
+              <div className={`text-7xl mb-6 ${!selectedBadge.unlocked && 'grayscale opacity-50'}`}>
+                {selectedBadge.icon}
+              </div>
+              
+              <h3 className={`text-2xl font-extrabold mb-2 ${selectedBadge.unlocked ? 'text-indigo-700' : 'text-slate-600'}`}>
+                {selectedBadge.name}
+              </h3>
+              
+              <div className="mb-6">
+                {selectedBadge.unlocked ? (
+                  <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Відкрито</span>
+                ) : (
+                  <span className="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Заблоковано</span>
+                )}
+              </div>
+              
+              <p className="text-slate-600 mb-6 leading-relaxed">
+                {selectedBadge.fullDesc}
+              </p>
+              
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <p className="text-sm font-semibold text-slate-500 mb-1">Як отримати:</p>
+                <p className="text-sm font-bold text-slate-800">{selectedBadge.desc}</p>
+              </div>
+              
+              <button 
+                onClick={() => setSelectedBadge(null)} 
+                className="mt-6 w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-black transition"
+              >
+                Зрозуміло
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     );
   };
