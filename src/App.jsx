@@ -540,7 +540,7 @@ function AppContent() {
 
     return (
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 max-w-2xl mx-auto text-center animate-fade-in">
-        <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-32 h-32 sm:w-32 sm:h-32 text-4xl sm:text-5xl" /></div>
+        <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-45 h-45 text-4xl sm:text-5xl" /></div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">{profile.username}</h1>
         <p className="text-sm sm:text-base text-slate-500 mb-8">Учень епохи суспільства знань</p>
         
@@ -615,7 +615,6 @@ function AppContent() {
             <div className="space-y-12 sm:space-y-16 animate-fade-in pb-8 sm:pb-12">
               <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800 rounded-3xl p-6 sm:p-10 md:p-16 text-white text-center shadow-2xl overflow-hidden">
                 <div className="relative z-10">
-                  <span className="inline-block py-1 px-3 rounded-full bg-white/20 text-indigo-100 text-xs sm:text-sm font-bold tracking-wider mb-4 sm:mb-6 backdrop-blur-sm border border-white/30">ВЕРСІЯ 1.0 (MVP)</span>
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 leading-tight break-words hyphens-auto">Твій персональний навігатор у <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">Суспільстві Знань</span></h1>
                   <p className="text-base sm:text-lg md:text-xl text-indigo-100 max-w-2xl mx-auto mb-8 sm:mb-10">Перетвори саморозвиток на захопливу гру. Оцінюй свої навички, виконуй реальні завдання, отримуй XP та ставай кращою версією себе.</p>
                   <button onClick={() => navigate('/dashboard')} className="w-full sm:w-auto bg-white text-indigo-700 font-extrabold text-base sm:text-lg px-8 sm:px-10 py-4 rounded-full hover:bg-indigo-50 shadow-[0_0_20px_rgba(255,255,255,0.3)] transform hover:-translate-y-1 transition-all">Почати свій шлях 🚀</button>
@@ -668,7 +667,7 @@ function AppContent() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
               <div className="md:col-span-1 space-y-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
-                  <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-24 h-24 sm:w-32 sm:h-32 text-2xl sm:text-4xl" /></div>
+                  <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-45 h-45 text-2xl sm:text-4xl" /></div>
                   <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-1">{profile.username}</h2>
                   <div className="flex items-center justify-between mb-2 mt-6"><span className="text-sm font-medium text-slate-500">Рівень</span><span className="bg-indigo-100 text-indigo-700 py-1 px-3 rounded-full text-sm font-bold">LVL {profile.level}</span></div>
                   <div className="mb-1 flex justify-between text-xs font-semibold text-slate-500 mt-4"><span>Досвід (XP)</span><span>{profile.xp} / 100</span></div>
