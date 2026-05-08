@@ -31,6 +31,7 @@ function AppContent() {
   const [reviewModalTaskId, setReviewModalTaskId] = useState(null);
   const [reflectionText, setReflectionText] = useState('');
   const [proofUrl, setProofUrl] = useState('');
+  const URL = "https://mindforge-api-x4yg.onrender.com";
 
   useEffect(() => {
     function handleClickOutside(event) { if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsDropdownOpen(false); }
@@ -43,9 +44,9 @@ function AppContent() {
 
   const fetchDashboardData = async () => {
     try {
-      const profileRes = await fetch('http://localhost:5000/profile', { headers: { 'Authorization': `Bearer ${token}` } });
+      const profileRes = await fetch(`${URL}/profile`, { headers: { 'Authorization': `Bearer ${token}` } });
       if (profileRes.ok) setProfile(await profileRes.json());
-      const tasksRes = await fetch('http://localhost:5000/tasks', { headers: { 'Authorization': `Bearer ${token}` } });
+      const tasksRes = await fetch(`${URL}/tasks`, { headers: { 'Authorization': `Bearer ${token}` } });
       if (tasksRes.ok) setTasks(await tasksRes.json());
     } catch (error) { console.error(error); }
   };
@@ -54,7 +55,7 @@ function AppContent() {
     e.preventDefault();
     if (!newTaskText.trim()) return;
     try {
-      const res = await fetch('http://localhost:5000/tasks/add', {
+      const res = await fetch(`${URL}/tasks/add`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ description: newTaskText })
       });
@@ -66,7 +67,7 @@ function AppContent() {
     e.preventDefault();
     if (reflectionText.length < 10) return alert('Напишіть хоча б короткий висновок!');
     try {
-      const res = await fetch(`http://localhost:5000/tasks/${reviewModalTaskId}/submit-for-review`, { 
+      const res = await fetch(`${URL}/tasks/${reviewModalTaskId}/submit-for-review`, { 
         method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ reflection_text: reflectionText, proof_url: proofUrl })
       });
@@ -76,7 +77,7 @@ function AppContent() {
 
   const handleUndoTask = async (taskId) => {
     try {
-      const res = await fetch(`http://localhost:5000/tasks/${taskId}/undo`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`${URL}/tasks/${taskId}/undo`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
       if (res.ok) fetchDashboardData();
     } catch (error) { console.error(error); }
   };
@@ -89,7 +90,7 @@ function AppContent() {
     if (password.length < 6) return setMessage('❌ Пароль має містити від 6 символів');
     const endpoint = isLogin ? '/auth/login' : '/auth/register';
     try {
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(`${URL}${endpoint}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: cleanEmail, password }),
       });
       const data = await response.json();
@@ -99,7 +100,7 @@ function AppContent() {
         localStorage.setItem('token', data.token); setToken(data.token); setMessage(''); navigate('/');
       } else {
         setMessage('⏳ Реєстрація успішна! Входимо...');
-        const loginResponse = await fetch(`http://localhost:5000/auth/login`, {
+        const loginResponse = await fetch(`${URL}/auth/login`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: cleanEmail, password }),
         });
         const loginData = await loginResponse.json();
@@ -137,7 +138,7 @@ function AppContent() {
     };
     const saveProfile = async (e) => {
       e.preventDefault();
-      const res = await fetch('http://localhost:5000/profile/update', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ username: newUsername, avatar_url: finalAvatarBase64 }) });
+      const res = await fetch(`${URL}/profile/update`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ username: newUsername, avatar_url: finalAvatarBase64 }) });
       if (res.ok) { setStatusMsg('✅ Профіль успішно оновлено!'); fetchDashboardData(); } else setStatusMsg('❌ Помилка оновлення');
       setTimeout(() => setStatusMsg(''), 3000);
     };
@@ -148,7 +149,7 @@ function AppContent() {
       e.preventDefault();
       if (newPassword.length < 6) return setStatusMsg('❌ Новий пароль має бути від 6 символів');
       if (oldPassword === newPassword) return setStatusMsg('❌ Новий пароль не може бути таким самим, як старий');
-      const res = await fetch('http://localhost:5000/auth/change-password', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ oldPassword, newPassword }) });
+      const res = await fetch(`${URL}/auth/change-password`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ oldPassword, newPassword }) });
       const data = await res.json();
       setStatusMsg(res.ok ? '✅ Пароль успішно змінено!' : `❌ ${data.message}`);
       if(res.ok) { setOldPassword(''); setNewPassword(''); }
@@ -216,13 +217,13 @@ function AppContent() {
     
     const fetchAdminTasks = async () => {
       try {
-        const res = await fetch('http://localhost:5000/tasks/admin/review-list', { headers: { 'Authorization': `Bearer ${token}` } });
+        const res = await fetch(`${URL}/tasks/admin/review-list`, { headers: { 'Authorization': `Bearer ${token}` } });
         if (res.ok) setAdminTasks(await res.json());
       } catch (e) { console.error(e); }
     };
     
     const handleAction = async (taskId, action) => {
-      try { await fetch(`http://localhost:5000/tasks/admin/${taskId}/${action}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } }); fetchAdminTasks(); } catch (e) { console.error(e); }
+      try { await fetch(`${URL}/tasks/admin/${taskId}/${action}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } }); fetchAdminTasks(); } catch (e) { console.error(e); }
     };
 
     const addQuestion = () => setTestQuestions([...testQuestions, { text: '', options: ['', ''], correctAnswerIndex: 0 }]);
@@ -239,7 +240,7 @@ function AppContent() {
         for (let opt of q.options) { if (!opt.trim()) return setTestStatus('❌ Заповніть всі варіанти відповідей'); }
       }
       try {
-        const res = await fetch('http://localhost:5000/tests/admin/add', {
+        const res = await fetch(`${URL}/tests/admin/add`, {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ title: testTitle, description: testDesc, xpReward: testXP, questions: testQuestions })
         });
@@ -337,7 +338,7 @@ function AppContent() {
     const [result, setResult] = useState(null);
 
     useEffect(() => {
-      fetch('http://localhost:5000/tests', { headers: { 'Authorization': `Bearer ${token}` } })
+      fetch(`${URL}/tests`, { headers: { 'Authorization': `Bearer ${token}` } })
         .then(res => res.json())
         .then(data => setTests(data))
         .catch(err => console.error(err));
@@ -352,7 +353,7 @@ function AppContent() {
       currentTest.questions.forEach((q, index) => { if (selectedAnswers[index] === q.correctAnswerIndex) score++; });
       const isPassed = score >= Math.ceil(currentTest.questions.length / 2);
       try {
-        const res = await fetch(`http://localhost:5000/tests/${currentTest.id}/complete`, {
+        const res = await fetch(`${URL}/tests/${currentTest.id}/complete`, {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ score, maxScore: currentTest.questions.length })
         });
@@ -436,7 +437,7 @@ function AppContent() {
     const [leaders, setLeaders] = useState([]);
 
     useEffect(() => {
-      fetch('http://localhost:5000/profile/leaderboard', { headers: { 'Authorization': `Bearer ${token}` } })
+      fetch(`${URL}/profile/leaderboard`, { headers: { 'Authorization': `Bearer ${token}` } })
         .then(res => res.json())
         .then(data => setLeaders(data))
         .catch(err => console.error(err));
@@ -524,7 +525,7 @@ function AppContent() {
 
     useEffect(() => {
       // Робимо запит до лідерборду і шукаємо себе
-      fetch('http://localhost:5000/profile/leaderboard', { headers: { 'Authorization': `Bearer ${token}` } })
+      fetch(`${URL}/profile/leaderboard`, { headers: { 'Authorization': `Bearer ${token}` } })
         .then(res => res.json())
         .then(data => {
           const index = data.findIndex(user => user.username === profile.username);
