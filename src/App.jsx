@@ -540,7 +540,7 @@ function AppContent() {
 
     return (
       <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 max-w-2xl mx-auto text-center animate-fade-in">
-        <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-24 h-24 sm:w-32 sm:h-32 text-4xl sm:text-5xl" /></div>
+        <div className="flex justify-center mb-4"><UserAvatar sizeClasses="w-32 h-32 sm:w-32 sm:h-32 text-4xl sm:text-5xl" /></div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">{profile.username}</h1>
         <p className="text-sm sm:text-base text-slate-500 mb-8">Учень епохи суспільства знань</p>
         
